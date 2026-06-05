@@ -9,7 +9,6 @@ from telegram.ext import (
     filters, ContextTypes, ConversationHandler
 )
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-import pandas as pd
 import io
 from database import Database
 
