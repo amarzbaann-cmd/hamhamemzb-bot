@@ -193,13 +193,17 @@ def main():
     app.add_handler(CommandHandler("cancel", cancel))
     app.add_handler(MessageHandler(filters.Document.ALL, handle_document))
 
-    scheduler = AsyncIOScheduler(timezone=TEHRAN_TZ)
-    scheduler.add_job(auto_daily,   "cron", hour=22, minute=0,          args=[app])
-    scheduler.add_job(auto_weekly,  "cron", day_of_week="fri", hour=22, args=[app])
-    scheduler.add_job(auto_monthly, "cron", day=1, hour=8,              args=[app])
-    scheduler.start()
-
     logger.info("✅ بات شروع به کار کرد!")
+
+    async def on_startup(app):
+        scheduler = AsyncIOScheduler(timezone=TEHRAN_TZ)
+        scheduler.add_job(auto_daily,   "cron", hour=22, minute=0,          args=[app])
+        scheduler.add_job(auto_weekly,  "cron", day_of_week="fri", hour=22, args=[app])
+        scheduler.add_job(auto_monthly, "cron", day=1, hour=8,              args=[app])
+        scheduler.start()
+        logger.info("Scheduler started.")
+
+    app.post_init = on_startup
     app.run_polling(allowed_updates=Update.ALL_TYPES, drop_pending_updates=True)
 
 
